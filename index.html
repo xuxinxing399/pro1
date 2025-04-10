@@ -1,282 +1,208 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>我们的恋爱记忆</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我们的恋爱相册</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fff6f6;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=1600&q=80') center/cover no-repeat fixed;
       overflow-x: hidden;
     }
 
-    /* 巨幅背景图 */
-    .side-bg {
+    .overlay {
       position: fixed;
       top: 0;
-      width: 30%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      opacity: 0.15;
-      z-index: -1;
-    }
-
-    .side-bg.left {
       left: 0;
-      background-image: url('https://via.placeholder.com/600x1200/feb3b3');
-    }
-
-    .side-bg.right {
-      right: 0;
-      background-image: url('https://via.placeholder.com/600x1200/fdc5f5');
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: -1;
     }
 
     header {
       display: flex;
       align-items: center;
       padding: 10px 20px;
-      background-color: #ffe4ec;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      z-index: 2;
-      position: relative;
+      position: absolute;
+      top: 10px;
+      left: 10px;
     }
 
-    .logo {
-      height: 36px;
+    header img {
+      height: 40px;
       margin-right: 10px;
     }
 
-    .title {
+    header h1 {
       font-size: 18px;
-      color: #ff6f91;
-      font-weight: bold;
+      margin: 0;
+      color: #ff69b4;
     }
 
-    /* 相册横向滚动区域 */
-    .scroll-container {
-      margin: 50px auto;
-      max-width: 1000px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding: 20px;
-      white-space: nowrap;
-      scroll-snap-type: x mandatory;
+    .music-box {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 182, 193, 0.7);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .scroll-container::-webkit-scrollbar {
-      height: 10px;
+    .carousel-wrapper {
+      position: relative;
+      max-width: 90%;
+      margin: 100px auto 50px;
+      overflow: hidden;
     }
 
-    .scroll-container::-webkit-scrollbar-thumb {
-      background-color: #ffb6c1;
-      border-radius: 5px;
+    .carousel {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      transition: transform 0.5s ease;
+      gap: 20px;
     }
 
     .album {
-      display: inline-block;
       width: 320px;
-      margin: 0 10px;
-      background: white;
+      aspect-ratio: 16/9;
       border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      scroll-snap-align: center;
+      background: white;
+      box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
       cursor: pointer;
       text-align: center;
+      overflow: hidden;
+      position: relative;
     }
 
     .album-title {
       font-size: 16px;
-      color: #ff6f91;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin: 8px 0;
+      color: #ff6f91;
     }
 
-    .album-cover {
+    .album img {
       width: 100%;
-      aspect-ratio: 16/9;
+      height: 80%;
       object-fit: cover;
-      border-radius: 8px;
-    }
-
-    /* 弹窗 */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 1000;
-    }
-
-    .modal img {
-      max-width: 90%;
-      max-height: 80%;
-      margin-bottom: 20px;
       border-radius: 10px;
     }
 
-    .modal .close {
+    .nav-btn {
       position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 40px;
-      color: white;
-      cursor: pointer;
-    }
-
-    .thumbnail-list {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 10px;
-    }
-
-    .thumbnail-list img {
-      height: 80px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    /* 音乐播放器 */
-    .music-player {
-      position: fixed;
-      top: 15px;
-      right: 20px;
-      background: #ffe4ec;
-      border-radius: 10px;
-      padding: 10px 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      color: #d14c7f;
-      z-index: 999;
-    }
-
-    .music-player button {
+      top: 45%;
+      background-color: rgba(255, 182, 193, 0.8);
       border: none;
-      background: #ffb6c1;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 6px;
+      border-radius: 50%;
+      font-size: 28px;
+      padding: 10px 14px;
       cursor: pointer;
+      color: white;
+      z-index: 10;
     }
 
-    .music-player button:hover {
-      background: #ff6f91;
+    .nav-btn.left {
+      left: 0;
+    }
+
+    .nav-btn.right {
+      right: 0;
+    }
+
+    .nav-btn:hover {
+      background-color: #ff6f91;
     }
   </style>
 </head>
 <body>
+  <div class="overlay"></div>
 
-<!-- 左右背景 -->
-<div class="side-bg left"></div>
-<div class="side-bg right"></div>
+  <!-- 顶部标题和logo -->
+  <header>
+    <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="logo">
+    <h1>我们的恋爱记忆</h1>
+  </header>
 
-<header>
-  <img src="https://via.placeholder.com/40" alt="logo" class="logo" />
-  <div class="title">我们的恋爱记忆</div>
-</header>
-
-<!-- 音乐播放 -->
-<div class="music-player">
-  🎵 <span id="songTitle">《恋爱的循环》</span>
-  <button onclick="toggleMusic()" id="musicBtn">⏸️ 暂停</button>
-</div>
-
-<!-- 相册展示区 -->
-<div class="scroll-container" id="albumContainer">
-  <!-- 示例相册 -->
-  <div class="album" onclick="openAlbum(0)">
-    <div class="album-title">第一次旅行</div>
-    <img class="album-cover" src="https://via.placeholder.com/640x360/ffadad/ffffff?text=Trip+Cover" alt="封面图" />
+  <!-- 背景音乐 -->
+  <div class="music-box">
+    🎵 <span id="song-title">Summer Love - Instrumental</span>
+    <button onclick="toggleMusic()">⏯</button>
+    <audio id="bg-music" src="https://cdn.pixabay.com/audio/2023/07/03/audio_a5918fa3f5.mp3" loop></audio>
   </div>
-  <div class="album" onclick="openAlbum(1)">
-    <div class="album-title">烟花大会</div>
-    <img class="album-cover" src="https://via.placeholder.com/640x360/fcb0b3/ffffff?text=Fireworks+Cover" alt="封面图" />
+
+  <!-- 相册区域 -->
+  <div class="carousel-wrapper">
+    <button class="nav-btn left" onclick="scrollAlbums(-1)">&#10094;</button>
+    <div class="carousel" id="carousel">
+      <!-- 6个示例相册 -->
+      <div class="album" onclick="openAlbum(0)">
+        <div class="album-title">第一次旅行</div>
+        <img src="https://via.placeholder.com/640x360/ffadad/ffffff?text=Trip+1" />
+      </div>
+      <div class="album" onclick="openAlbum(1)">
+        <div class="album-title">第一次看电影</div>
+        <img src="https://via.placeholder.com/640x360/ffd6a5/ffffff?text=Movie+Date" />
+      </div>
+      <div class="album" onclick="openAlbum(2)">
+        <div class="album-title">第一次下厨</div>
+        <img src="https://via.placeholder.com/640x360/caffbf/ffffff?text=Cooking+Together" />
+      </div>
+      <div class="album" onclick="openAlbum(3)">
+        <div class="album-title">一起散步</div>
+        <img src="https://via.placeholder.com/640x360/9bf6ff/ffffff?text=Walks+In+Park" />
+      </div>
+      <div class="album" onclick="openAlbum(4)">
+        <div class="album-title">我们的合照</div>
+        <img src="https://via.placeholder.com/640x360/a0c4ff/ffffff?text=Selfies" />
+      </div>
+      <div class="album" onclick="openAlbum(5)">
+        <div class="album-title">第一次过生日</div>
+        <img src="https://via.placeholder.com/640x360/bdb2ff/ffffff?text=Birthday" />
+      </div>
+    </div>
+    <button class="nav-btn right" onclick="scrollAlbums(1)">&#10095;</button>
   </div>
-  <div class="album" onclick="openAlbum(2)">
-    <div class="album-title">第一次做饭</div>
-    <img class="album-cover" src="https://via.placeholder.com/640x360/fde2e4/ffffff?text=Cooking+Cover" alt="封面图" />
-  </div>
-  <div class="album" onclick="openAlbum(3)">
-    <div class="album-title">我们的猫猫</div>
-    <img class="album-cover" src="https://via.placeholder.com/640x360/fdc5f5/ffffff?text=Cat+Cover" alt="封面图" />
-  </div>
-</div>
 
-<!-- 弹窗展示大图 -->
-<div id="modal" class="modal">
-  <span class="close" onclick="closeModal()">&times;</span>
-  <img id="mainPhoto" src="" alt="预览" />
-  <div class="thumbnail-list" id="thumbnails"></div>
-</div>
+  <script>
+    let musicPlaying = false;
+    const music = document.getElementById("bg-music");
 
-<!-- 背景音乐 -->
-<audio id="bgMusic" autoplay loop>
-  <source src="https://example.com/your-music.mp3" type="audio/mpeg" />
-</audio>
-
-<script>
-  const albums = [
-    ["https://via.placeholder.com/800x450/ffadad/ffffff?text=Trip+1", "https://via.placeholder.com/800x450/ffbaba/ffffff?text=Trip+2"],
-    ["https://via.placeholder.com/800x450/fcb0b3/ffffff?text=Fireworks+1", "https://via.placeholder.com/800x450/fcd5ce/ffffff?text=Fireworks+2"],
-    ["https://via.placeholder.com/800x450/fde2e4/ffffff?text=Cooking+1"],
-    ["https://via.placeholder.com/800x450/fdc5f5/ffffff?text=Cat+1", "https://via.placeholder.com/800x450/fdc5f5/ffffff?text=Cat+2"]
-  ];
-
-  let currentAlbumIndex = 0;
-
-  function openAlbum(index) {
-    currentAlbumIndex = index;
-    const modal = document.getElementById('modal');
-    const thumbnails = document.getElementById('thumbnails');
-    const mainPhoto = document.getElementById('mainPhoto');
-    thumbnails.innerHTML = '';
-
-    albums[index].forEach((src, i) => {
-      const thumb = document.createElement('img');
-      thumb.src = src;
-      thumb.onclick = () => mainPhoto.src = src;
-      thumbnails.appendChild(thumb);
-    });
-
-    mainPhoto.src = albums[index][0];
-    modal.style.display = 'flex';
-  }
-
-  function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-  }
-
-  const music = document.getElementById("bgMusic");
-  const btn = document.getElementById("musicBtn");
-
-  function toggleMusic() {
-    if (music.paused) {
-      music.play();
-      btn.innerText = "⏸️ 暂停";
-    } else {
-      music.pause();
-      btn.innerText = "▶️ 播放";
+    function toggleMusic() {
+      if (musicPlaying) {
+        music.pause();
+      } else {
+        music.play();
+      }
+      musicPlaying = !musicPlaying;
     }
-  }
 
-  // 鼠标滚动横向处理
-  const scroller = document.getElementById("albumContainer");
-  scroller.addEventListener("wheel", (evt) => {
-    evt.preventDefault();
-    scroller.scrollLeft += evt.deltaY;
-  });
-</script>
+    function openAlbum(index) {
+      alert("进入相册：" + index + "（可扩展为相册详情页）");
+    }
 
+    // 相册滑动控制
+    let scrollIndex = 0;
+
+    function scrollAlbums(direction) {
+      const carousel = document.getElementById('carousel');
+      const cardWidth = carousel.querySelector('.album').offsetWidth + 20; 
+      const visibleCount = Math.floor(carousel.offsetWidth / cardWidth);
+      const maxIndex = carousel.children.length - visibleCount;
+
+      scrollIndex += direction;
+      if (scrollIndex < 0) scrollIndex = 0;
+      if (scrollIndex > maxIndex) scrollIndex = maxIndex;
+
+      carousel.style.transform = `translateX(-${scrollIndex * cardWidth}px)`;
+    }
+  </script>
 </body>
 </html>
